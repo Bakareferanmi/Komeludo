@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ref, set, get } from "firebase/database";
-import { db, ensureAuth } from "../firebase";
+import { ensureAuth, createRoom, getRoom, setPlayer } from "../socket";
 import { createInitialTokens, PLAYERS } from "../game/ludoLogic";
 
 function makeRoomCode() {
@@ -23,20 +22,17 @@ export default function Home() {
     setBusy(true);
     setError("");
     try {
-      const uid = await ensureAuth();
+      await ensureAuth();
       const code = makeRoomCode();
-      await set(ref(db, `rooms/${code}`), {
-        createdAt: Date.now(),
-        status: "waiting",
+      await createRoom(code, {
+        name,
+        playerId: PLAYERS[0].id,
         turn: PLAYERS[0].id,
-        players: {
-          [uid]: { name, playerId: PLAYERS[0].id, joinedAt: Date.now() },
-        },
         tokens: createInitialTokens(),
       });
       navigate(`/room/${code}`, { state: { name } });
     } catch (e) {
-      setError("Couldn't create the room. Check your Firebase config.");
+      setError("Couldn't create the room. Check your server connection.");
       console.error(e);
     } finally {
       setBusy(false);
@@ -49,15 +45,14 @@ export default function Home() {
     setBusy(true);
     setError("");
     try {
-      const uid = await ensureAuth();
+      await ensureAuth();
       const code = joinCode.trim().toUpperCase();
-      const snap = await get(ref(db, `rooms/${code}`));
-      if (!snap.exists()) {
+      const room = await getRoom(code);
+      if (!room) {
         setError("That room doesn't exist");
         setBusy(false);
         return;
       }
-      const room = snap.val();
       const existingPlayers = room.players ? Object.values(room.players) : [];
       if (existingPlayers.length >= 4) {
         setError("Room is full (max 4 sweethearts)");
@@ -66,11 +61,7 @@ export default function Home() {
       }
       const takenColors = existingPlayers.map((p) => p.playerId);
       const nextColor = PLAYERS.find((p) => !takenColors.includes(p.id))?.id || PLAYERS[0].id;
-      await set(ref(db, `rooms/${code}/players/${uid}`), {
-        name,
-        playerId: nextColor,
-        joinedAt: Date.now(),
-      });
+      await setPlayer(code, name, nextColor);
       navigate(`/room/${code}`, { state: { name } });
     } catch (e) {
       setError("Couldn't join that room.");

@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { ref, onValue, update } from "firebase/database";
-import { db, ensureAuth } from "../firebase";
+import { ensureAuth, subscribeRoom, updateRoom } from "../socket";
 import { PLAYERS, rollDice, getMovableTokens, applyMove, hasPlayerWon } from "../game/ludoLogic";
 import Board from "../components/Board";
 import Dice from "../components/Dice";
@@ -20,11 +19,8 @@ export default function Room() {
   }, []);
 
   useEffect(() => {
-    const roomRef = ref(db, `rooms/${code}`);
-    const unsub = onValue(roomRef, (snap) => {
-      setRoom(snap.val());
-    });
-    return () => unsub();
+    const unsub = subscribeRoom(code, setRoom);
+    return unsub;
   }, [code]);
 
   const players = useMemo(() => (room?.players ? Object.entries(room.players) : []), [room]);
@@ -55,8 +51,7 @@ export default function Room() {
       setHasRolledThisTurn(true);
       const movable = getMovableTokens(room.tokens, myPlayerId, val);
       if (movable.length === 0) {
-        // no legal move — pass turn (unless it was a 6, classic rule: 6 always re-rolls if no move? keep simple: pass)
-        await update(ref(db, `rooms/${code}`), { turn: nextTurnId(myPlayerId) });
+        await updateRoom(code, { turn: nextTurnId(myPlayerId) });
         setHasRolledThisTurn(false);
       }
     }, 500);
@@ -71,10 +66,9 @@ export default function Room() {
       updates.status = "finished";
       updates.winner = playerId;
     } else {
-      // extra turn on rolling a 6
       updates.turn = diceValue === 6 ? myPlayerId : nextTurnId(myPlayerId);
     }
-    await update(ref(db, `rooms/${code}`), updates);
+    await updateRoom(code, updates);
     setHasRolledThisTurn(false);
     if (won) setWinner(playerId);
   }
