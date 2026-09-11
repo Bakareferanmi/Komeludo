@@ -78,7 +78,7 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
             if (r < 6 && c < 6) bg = "bg-blushPlayer/30";
             else if (r < 6 && c > 8) bg = "bg-goldPlayer/30";
             else if (r > 8 && c < 6) bg = "bg-rosePlayer/20";
-            else if (r > 8 && c > 8) bg = "bg-ivoryPlayer/40";
+            else if (r > 8 && c > 8) bg = "bg-ivoryPlayer/80";
           }
 
           return (
