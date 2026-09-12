@@ -126,8 +126,8 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
         <button
           key={key}
           onClick={() => movable && onTokenClick?.(player.id, key.split("-")[1] * 1)}
-          className={`absolute flex items-center justify-center rounded-full text-sm shadow-md border-2 border-white transition
-            ${movable ? "ring-4 ring-tomato animate-pulse cursor-pointer scale-110 z-10" : ""}`}
+          className={`absolute flex items-center justify-center rounded-full text-sm border-2 border-white shadow-lg shadow-black/50 transition
+            ${movable ? "ring-4 ring-tomato animate-pulse cursor-pointer scale-110 z-10" : "ring-2 ring-ink/30"}`}
           style={{
             width: "6.2%",
             height: "6.2%",
