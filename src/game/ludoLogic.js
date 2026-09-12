@@ -4,10 +4,10 @@
 // and 6 home-column cells (52-57) before reaching FINISH (58).
 
 export const PLAYERS = [
-  { id: "rose", label: "Rose", emoji: "🌹", color: "#E85D75", startIndex: 0 },
-  { id: "gold", label: "Gold", emoji: "💍", color: "#D4A574", startIndex: 13 },
-  { id: "blush", label: "Blush", emoji: "💗", color: "#F7B2C4", startIndex: 26 },
-  { id: "ivory", label: "Ivory", emoji: "🕊️", color: "#F5F0E8", startIndex: 39 },
+  { id: "rose", label: "Rose", emoji: "🌹", color: "#FF6347", startIndex: 0 },
+  { id: "gold", label: "Gold", emoji: "💍", color: "#FACC15", startIndex: 13 },
+  { id: "blush", label: "Blush", emoji: "💗", color: "#3B82F6", startIndex: 26 },
+  { id: "ivory", label: "Ivory", emoji: "🕊️", color: "#22C55E", startIndex: 39 },
 ];
 
 const PATH_LENGTH = 52;
