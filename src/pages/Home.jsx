@@ -108,7 +108,7 @@ export default function Home() {
             onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
             placeholder="ROOM CODE"
             maxLength={5}
-            className="flex-1 rounded-xl border border-goldrose/40 bg-white px-4 py-2.5 outline-none focus:border-goldrose tracking-widest text-center"
+            className="flex-1 min-w-0 rounded-xl border border-goldrose/40 bg-white px-4 py-2.5 outline-none focus:border-goldrose tracking-widest text-center"
           />
           <button
             onClick={handleJoin}
