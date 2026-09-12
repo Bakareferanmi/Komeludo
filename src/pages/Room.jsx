@@ -118,7 +118,7 @@ export default function Room() {
 
   if (!room) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-ink font-body">
+      <div className="min-h-screen flex items-center justify-center bg-charcoal text-slate-300 font-body">
         <p className="animate-pulse">Setting up the board...</p>
       </div>
     );
@@ -128,11 +128,11 @@ export default function Room() {
   const turnPlayer = PLAYERS.find((p) => p.id === room.turn);
 
   return (
-    <div className="min-h-screen flex flex-col items-center px-4 py-6 text-ink font-body">
-      <div className="w-full max-w-md flex items-center justify-between mb-4">
+    <div className="min-h-screen flex flex-col items-center px-4 py-6 pb-10 bg-charcoal text-slate-100 font-body">
+      <div className="w-full max-w-md flex items-center justify-between mb-5">
         <div>
-          <p className="text-xs text-ink/40 font-medium">Room code</p>
-          <p className="font-display font-extrabold text-xl tracking-widest text-tomato">{code}</p>
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Room</p>
+          <p className="font-display font-bold text-sm tracking-[0.2em] text-slate-300">{code}</p>
         </div>
         <div className="flex -space-x-2">
           {players.map(([id, p]) => {
@@ -141,7 +141,7 @@ export default function Room() {
               <div
                 key={id}
                 title={p.name}
-                className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white shadow"
+                className="w-8 h-8 rounded-full border-2 border-charcoal flex items-center justify-center text-xs font-bold text-white shadow"
                 style={{ backgroundColor: pl?.color }}
               >
                 {p.name?.[0]?.toUpperCase()}
@@ -160,17 +160,22 @@ export default function Room() {
         </div>
       ) : (
         <>
-          <p className="text-sm mb-3 font-medium">
+          <div className="mb-4 h-7 flex items-center">
             {isMyTurn ? (
-              <span className="font-bold text-tomato">Your move</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tomato/15 border border-tomato/40 text-tomato font-bold text-sm tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-tomato animate-pulse" />
+                Your move
+              </span>
             ) : (
-              <span className="text-ink/50">Waiting on {turnPlayer?.label}...</span>
+              <span className="text-sm text-slate-400">
+                Waiting on <span className="font-semibold text-slate-200">{turnPlayer?.label}</span>...
+              </span>
             )}
-          </p>
+          </div>
 
           <Board tokens={room.tokens} onTokenClick={handleTokenClick} movableSet={movableSet} />
 
-          <div className="mt-5 flex items-center gap-4">
+          <div className="mt-6 flex items-center gap-5 bg-surface/70 border border-surfaceBorder rounded-2xl px-5 py-4">
             <DicePair
               values={diceValues}
               dieStatus={dieStatus}
@@ -182,7 +187,7 @@ export default function Room() {
               disabled={!isMyTurn}
               color={myPlayer?.color}
             />
-            <p className="text-xs text-ink/50 max-w-[160px]">
+            <p className="text-xs text-slate-400 max-w-[160px] leading-snug">
               {isMyTurn && !hasRolledThisTurn && "Tap the dice to roll"}
               {isMyTurn && hasRolledThisTurn && selectedDie === null && "Tap an available die, then a piece"}
               {isMyTurn && hasRolledThisTurn && selectedDie !== null && "Tap a glowing piece to move it"}
@@ -190,7 +195,9 @@ export default function Room() {
           </div>
 
           {players.length < 2 && (
-            <p className="mt-6 text-xs text-ink/40">Share code {code} to begin</p>
+            <p className="mt-6 text-xs text-slate-500">
+              Share code <span className="text-slate-200 font-semibold tracking-wider">{code}</span> to begin
+            </p>
           )}
         </>
       )}

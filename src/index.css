@@ -6,14 +6,56 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #FFE4EC 0%, #FFF8F0 50%, #F7DCE8 100%);
+  background: #12141a;
   min-height: 100vh;
 }
 
-.heart-pulse {
-  animation: heartPulse 1.4s ease-in-out infinite;
+@layer utilities {
+  .dice-idle {
+    animation: diceIdle 3.2s ease-in-out infinite;
+  }
+  .dice-rolling {
+    animation: diceRoll 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .dice-shadow-rolling {
+    animation: diceShadowPulse 0.55s ease-in-out both;
+  }
+  .dice-glow {
+    animation: diceGlowPulse 0.6s ease-out;
+  }
+  .confetti-dot {
+    position: absolute;
+    border-radius: 9999px;
+    animation: confettiPop 0.6s ease-out forwards;
+    pointer-events: none;
+  }
 }
-@keyframes heartPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+
+@keyframes diceIdle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(-3deg); }
+}
+
+@keyframes diceRoll {
+  0% { transform: rotate3d(1, 1, 0, 0deg) scale(1); }
+  25% { transform: rotate3d(1, 1, 0, 160deg) scale(1.18); }
+  50% { transform: rotate3d(0, 1, 1, 340deg) scale(1.22); }
+  75% { transform: rotate3d(1, 0, 1, 520deg) scale(1.05); }
+  100% { transform: rotate3d(0, 0, 1, 720deg) scale(1); }
+}
+
+@keyframes diceShadowPulse {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(0.7); opacity: 0.15; }
+}
+
+@keyframes diceGlowPulse {
+  0% { box-shadow: 0 0 0 0 var(--glow-color, rgba(255, 99, 71, 0.6)); }
+  60% { box-shadow: 0 0 0 10px var(--glow-color, rgba(255, 99, 71, 0)); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+}
+
+@keyframes confettiPop {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0.4); opacity: 0; }
 }

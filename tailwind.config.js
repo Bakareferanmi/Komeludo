@@ -12,6 +12,9 @@ export default {
         blushPlayer: "#3B82F6",
         goldPlayer: "#FACC15",
         ivoryPlayer: "#22C55E",
+        charcoal: "#12141a",
+        surface: "#1c1f27",
+        surfaceBorder: "#2a2e39",
       },
       fontFamily: {
         display: ["Poppins", "sans-serif"],

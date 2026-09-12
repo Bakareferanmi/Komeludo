@@ -70,7 +70,7 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
   });
 
   return (
-    <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-xl border-2 border-ink/5 p-3">
+    <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-2xl shadow-black/50 border border-ink/5 p-3">
       <div
         className="grid w-full h-full rounded-2xl overflow-hidden border-2 border-ink/10"
         style={{ gridTemplateColumns: "repeat(15, 1fr)", gridTemplateRows: "repeat(15, 1fr)" }}
@@ -86,7 +86,6 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
           let extraClass = "bg-white";
 
           if (isCenter) {
-            // 4 triangles meeting at center, each colored to a player's home lane
             if (r === 7 && c === 7) {
               extraClass = "bg-ink";
               content = <span className="text-white text-[10px]">★</span>;
@@ -98,7 +97,6 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
             extraClass = isSafe ? "bg-tomatoLight" : "bg-white";
             if (isSafe) content = <span className="text-tomato text-[9px]">✦</span>;
           } else {
-            // yard quadrants — solid color block with rounded inner white panel look
             let yardColor = null;
             if (r < 6 && c < 6) yardColor = "rose";
             else if (r < 6 && c > 8) yardColor = "gold";
