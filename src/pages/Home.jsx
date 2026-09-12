@@ -107,4 +107,116 @@ export default function Home() {
     }
   }
 
-  async funct
+  async function handleJoin() {
+    if (!name.trim()) return setError("Enter your name first");
+    if (!joinCode.trim()) return setError("Enter a room code");
+    setBusy(true);
+    setError("");
+    try {
+      await ensureAuth();
+      const code = joinCode.trim().toUpperCase();
+      const room = await getRoom(code);
+      if (!room) {
+        setError("That room doesn't exist");
+        setBusy(false);
+        return;
+      }
+      const existingPlayers = room.players ? Object.values(room.players) : [];
+      if (existingPlayers.length >= 4) {
+        setError("Room is full (max 4 players)");
+        setBusy(false);
+        return;
+      }
+      const takenColors = existingPlayers.map((p) => p.playerId);
+      const nextColor = PLAYERS.find((p) => !takenColors.includes(p.id))?.id || PLAYERS[0].id;
+      await setPlayer(code, name, nextColor);
+      navigate(`/room/${code}`, { state: { name } });
+    } catch (e) {
+      setError("Couldn't join that room.");
+      console.error(e);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center px-6 py-10 bg-white text-ink font-body overflow-hidden relative">
+      <div className="absolute -top-16 -left-16 w-48 h-48 rounded-full bg-tomatoLight pointer-events-none" />
+      <div className="absolute -bottom-20 -right-16 w-56 h-56 rounded-full bg-tomatoLight pointer-events-none" />
+
+      <div className="flex flex-col items-center mt-6 mb-8 z-10">
+        <span className="font-display text-6xl font-black text-tomato leading-none mb-1">K</span>
+        <h1 className="font-display text-4xl font-extrabold tracking-tight">Komeludo</h1>
+        <p className="text-sm text-ink/50 font-medium mt-1">Fast, simple, online Ludo</p>
+      </div>
+
+      <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-ink/5 p-6 space-y-5 z-10">
+        <div>
+          <label className="text-xs font-semibold text-ink/50 uppercase tracking-wide">Your name</label>
+          <div className="relative mt-1.5">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/30">
+              <PersonIcon />
+            </span>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Wale"
+              className="w-full rounded-xl border-2 border-ink/10 bg-white pl-11 pr-4 py-3 outline-none focus:border-tomato transition font-medium"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={handleCreate}
+          disabled={busy}
+          className="w-full flex items-center justify-between rounded-2xl bg-tomato text-white font-bold px-5 py-3.5 shadow-md active:scale-[0.98] transition disabled:opacity-50"
+        >
+          <span className="flex items-center gap-2">
+            <GroupIcon />
+            Create a room
+          </span>
+          <ArrowIcon />
+        </button>
+
+        <div className="flex items-center gap-3 text-xs font-medium text-ink/30">
+          <div className="h-px flex-1 bg-ink/10" />
+          or join one
+          <div className="h-px flex-1 bg-ink/10" />
+        </div>
+
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-tomato">
+            <CodeIcon />
+          </span>
+          <input
+            value={joinCode}
+            onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+            placeholder="Room code"
+            maxLength={5}
+            className="w-full rounded-2xl border-2 border-ink/10 bg-white pl-11 pr-11 py-3.5 outline-none focus:border-tomato tracking-widest font-semibold transition"
+          />
+          <button
+            onClick={handleJoin}
+            disabled={busy}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-tomato disabled:opacity-30"
+          >
+            <ArrowIcon />
+          </button>
+        </div>
+
+        {error && <p className="text-xs text-tomatoDark font-medium text-center">{error}</p>}
+      </div>
+
+      <div className="flex items-center gap-2 mt-6 text-xs text-ink/40 font-medium z-10">
+        <GroupIcon />
+        <span>2–4 players · same rules, faster games</span>
+      </div>
+
+      <div className="mt-auto pt-10 w-full max-w-sm flex items-end justify-between px-4 z-0">
+        <Pawn color="#FF6347" />
+        <Die />
+        <Pawn color="#3B82F6" />
+      </div>
+    </div>
+  );
+}
