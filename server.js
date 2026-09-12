@@ -1,7 +1,10 @@
 import { WebSocketServer } from 'ws';
 import { randomUUID } from 'crypto';
 
-const wss = new WebSocketServer({ port: 8080 });
+const PORT = process.env.PORT || 8080;
+const wss = new WebSocketServer({ port: PORT });
+console.log(`Server running on port ${PORT}`);
+
 const rooms = {};
 
 wss.on('connection', (ws) => {
