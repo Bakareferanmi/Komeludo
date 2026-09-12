@@ -12,7 +12,6 @@ export const TRACK = [
   [8, 5], [8, 4], [8, 3], [8, 2], [8, 1], [8, 0], [7, 0],
 ];
 
-// Home-column strips (6 cells each, cosmetic — index 0 nearest the ring, 5 nearest center)
 const HOME_COLUMNS = {
   rose: [[7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6]],
   gold: [[1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7]],
@@ -27,6 +26,20 @@ const YARD_ORIGIN = {
   ivory: [9, 9],
 };
 
+const YARD_COLOR = {
+  rose: "bg-rosePlayer",
+  gold: "bg-goldPlayer",
+  blush: "bg-blushPlayer",
+  ivory: "bg-ivoryPlayer",
+};
+
+const HOME_TRIANGLE = {
+  rose: "border-t-rosePlayer",
+  gold: "border-b-goldPlayer",
+  blush: "border-r-blushPlayer",
+  ivory: "border-l-ivoryPlayer",
+};
+
 function cellKey(r, c) {
   return `${r}-${c}`;
 }
@@ -35,7 +48,6 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
   const trackCells = {};
   TRACK.forEach(([r, c], i) => (trackCells[cellKey(r, c)] = i));
 
-  // Group tokens by rendered cell so we can offset overlapping pieces
   const renderTokens = [];
   PLAYERS.forEach((player) => {
     (tokens?.[player.id] || []).forEach((token) => {
@@ -58,9 +70,9 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
   });
 
   return (
-    <div className="relative w-full max-w-md aspect-square bg-white/60 rounded-3xl shadow-xl p-2">
+    <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-xl border-2 border-ink/5 p-3">
       <div
-        className="grid w-full h-full rounded-2xl overflow-hidden border-2 border-white"
+        className="grid w-full h-full rounded-2xl overflow-hidden border-2 border-ink/10"
         style={{ gridTemplateColumns: "repeat(15, 1fr)", gridTemplateRows: "repeat(15, 1fr)" }}
       >
         {Array.from({ length: 15 * 15 }).map((_, i) => {
@@ -70,21 +82,42 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
           const isSafe = onTrack && SAFE_CELLS.includes(trackCells[cellKey(r, c)]);
           const isCenter = r >= 6 && r <= 8 && c >= 6 && c <= 8;
 
-          let bg = "bg-blush/30";
-          if (isCenter) bg = "bg-gradient-to-br from-rose to-goldrose";
-          else if (onTrack) bg = isSafe ? "bg-goldrose/40" : "bg-ivory";
-          else {
-            // yard quadrant coloring
-            if (r < 6 && c < 6) bg = "bg-blushPlayer/30";
-            else if (r < 6 && c > 8) bg = "bg-goldPlayer/30";
-            else if (r > 8 && c < 6) bg = "bg-rosePlayer/20";
-            else if (r > 8 && c > 8) bg = "bg-ivoryPlayer/80";
+          let content = null;
+          let extraClass = "bg-white";
+
+          if (isCenter) {
+            // 4 triangles meeting at center, each colored to a player's home lane
+            if (r === 7 && c === 7) {
+              extraClass = "bg-ink";
+              content = <span className="text-white text-[10px]">★</span>;
+            } else if (r < 7) extraClass = "bg-goldPlayer/90";
+            else if (r > 7) extraClass = "bg-ivoryPlayer/90";
+            else if (c < 7) extraClass = "bg-rosePlayer/90";
+            else extraClass = "bg-blushPlayer/90";
+          } else if (onTrack) {
+            extraClass = isSafe ? "bg-tomatoLight" : "bg-white";
+            if (isSafe) content = <span className="text-tomato text-[9px]">✦</span>;
+          } else {
+            // yard quadrants — solid color block with rounded inner white panel look
+            let yardColor = null;
+            if (r < 6 && c < 6) yardColor = "rose";
+            else if (r < 6 && c > 8) yardColor = "gold";
+            else if (r > 8 && c < 6) yardColor = "blush";
+            else if (r > 8 && c > 8) yardColor = "ivory";
+
+            if (yardColor) {
+              extraClass = `${YARD_COLOR[yardColor]}`;
+            } else {
+              extraClass = "bg-white";
+            }
           }
 
           return (
-            <div key={i} className={`${bg} border border-white/40 flex items-center justify-center text-[8px]`}>
-              {isSafe && "✦"}
-              {isCenter && r === 7 && c === 7 && "💞"}
+            <div
+              key={i}
+              className={`${extraClass} border border-ink/5 flex items-center justify-center`}
+            >
+              {content}
             </div>
           );
         })}
@@ -95,8 +128,8 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
         <button
           key={key}
           onClick={() => movable && onTokenClick?.(player.id, key.split("-")[1] * 1)}
-          className={`absolute flex items-center justify-center rounded-full text-sm shadow-md transition
-            ${movable ? "ring-4 ring-white animate-pulse cursor-pointer" : ""}`}
+          className={`absolute flex items-center justify-center rounded-full text-sm shadow-md border-2 border-white transition
+            ${movable ? "ring-4 ring-tomato animate-pulse cursor-pointer scale-110 z-10" : ""}`}
           style={{
             width: "6.2%",
             height: "6.2%",
@@ -105,9 +138,7 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
             backgroundColor: player.color,
           }}
           title={`${player.label} ${player.emoji}`}
-        >
-          {player.emoji}
-        </button>
+        />
       ))}
     </div>
   );

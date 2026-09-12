@@ -4,23 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        blush: "#FFE4EC",
-        rose: "#E85D75",
-        roseDark: "#C13A56",
-        goldrose: "#D4A574",
-        ivory: "#FFF8F0",
-        plum: "#4A2B3C",
-        rosePlayer: "#E85D75",
-        blushPlayer: "#F7B2C4",
-        goldPlayer: "#D4A574",
-        ivoryPlayer: "#F5F0E8",
+        tomato: "#FF6347",
+        tomatoDark: "#D9432D",
+        tomatoLight: "#FFE8E3",
+        ink: "#1F1B1A",
+        // player colors — punchier, distinct
+        rosePlayer: "#FF6347",
+        blushPlayer: "#3B82F6",
+        goldPlayer: "#FACC15",
+        ivoryPlayer: "#22C55E",
       },
       fontFamily: {
-        display: ["Playfair Display", "serif"],
+        display: ["Poppins", "sans-serif"],
         body: ["Poppins", "sans-serif"],
-      },
-      backgroundImage: {
-        "romance-gradient": "linear-gradient(135deg, #FFE4EC 0%, #FFF8F0 50%, #F7DCE8 100%)",
       },
     },
   },
