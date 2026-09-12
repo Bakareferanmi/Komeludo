@@ -48,14 +48,26 @@ function ArrowIcon() {
   );
 }
 
-function Die() {
+function Spinner() {
+  return (
+    <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+    </svg>
+  );
+}
+
+function Die({ delay = "0s" }) {
   const dots = [
     "top-1.5 left-1.5", "top-1.5 right-1.5",
     "top-1/2 left-1.5 -translate-y-1/2", "top-1/2 right-1.5 -translate-y-1/2",
     "bottom-1.5 left-1.5", "bottom-1.5 right-1.5",
   ];
   return (
-    <div className="relative w-12 h-12 bg-white rounded-xl shadow-md border-2 border-ink/5 -rotate-6">
+    <div
+      className="relative w-12 h-12 bg-white rounded-xl shadow-lg border-2 border-ink/5 -rotate-6 animate-float"
+      style={{ animationDelay: delay }}
+    >
       {dots.map((pos, i) => (
         <div key={i} className={`absolute ${pos} w-2 h-2 rounded-full bg-tomato`} />
       ))}
@@ -63,15 +75,15 @@ function Die() {
   );
 }
 
-function Pawn({ color }) {
+function Pawn({ color, delay = "0s" }) {
   return (
-    <div className="relative w-9 h-13">
+    <div className="relative w-9 h-13 animate-float" style={{ animationDelay: delay }}>
       <div
-        className="absolute left-1/2 -translate-x-1/2 top-0 w-6 h-6 rounded-full shadow-md border-2 border-white"
+        className="absolute left-1/2 -translate-x-1/2 top-0 w-6 h-6 rounded-full shadow-lg border-2 border-white"
         style={{ backgroundColor: color }}
       />
       <div
-        className="absolute left-1/2 -translate-x-1/2 bottom-0 w-8 h-7 rounded-t-full shadow-md border-2 border-white"
+        className="absolute left-1/2 -translate-x-1/2 bottom-0 w-8 h-7 rounded-t-full shadow-lg border-2 border-white"
         style={{ backgroundColor: color }}
       />
     </div>
@@ -141,16 +153,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center px-6 py-10 bg-white text-ink font-body overflow-hidden relative">
-      <div className="absolute -top-16 -left-16 w-48 h-48 rounded-full bg-tomatoLight pointer-events-none" />
-      <div className="absolute -bottom-20 -right-16 w-56 h-56 rounded-full bg-tomatoLight pointer-events-none" />
+      <div className="absolute -top-16 -left-16 w-48 h-48 rounded-full bg-tomatoLight pointer-events-none animate-blobMove" />
+      <div
+        className="absolute -bottom-20 -right-16 w-56 h-56 rounded-full bg-tomatoLight pointer-events-none animate-blobMove"
+        style={{ animationDelay: "3s" }}
+      />
 
-      <div className="flex flex-col items-center mt-6 mb-8 z-10">
+      <div className="flex flex-col items-center mt-6 mb-8 z-10 animate-fadeInUp">
         <span className="font-display text-6xl font-black text-tomato leading-none mb-1">K</span>
         <h1 className="font-display text-4xl font-extrabold tracking-tight">Komeludo</h1>
         <p className="text-sm text-ink/50 font-medium mt-1">Fast, simple, online Ludo</p>
       </div>
 
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-ink/5 p-6 space-y-5 z-10">
+      <div
+        className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-ink/5 p-6 space-y-5 z-10 animate-popIn"
+        style={{ animationDelay: "120ms" }}
+      >
         <div>
           <label className="text-xs font-semibold text-ink/50 uppercase tracking-wide">Your name</label>
           <div className="relative mt-1.5">
@@ -161,7 +179,7 @@ export default function Home() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Wale"
-              className="w-full rounded-xl border-2 border-ink/10 bg-white pl-11 pr-4 py-3 outline-none focus:border-tomato transition font-medium"
+              className="w-full rounded-xl border-2 border-ink/10 bg-white pl-11 pr-4 py-3 outline-none focus:border-tomato focus:ring-4 focus:ring-tomato/10 transition font-medium"
             />
           </div>
         </div>
@@ -169,13 +187,16 @@ export default function Home() {
         <button
           onClick={handleCreate}
           disabled={busy}
-          className="w-full flex items-center justify-between rounded-2xl bg-tomato text-white font-bold px-5 py-3.5 shadow-md active:scale-[0.98] transition disabled:opacity-50"
+          className="group relative w-full overflow-hidden flex items-center justify-between rounded-2xl bg-tomato-gradient text-white font-bold px-5 py-3.5 shadow-lg shadow-tomato/25 active:scale-[0.97] transition-transform disabled:opacity-50"
         >
-          <span className="flex items-center gap-2">
-            <GroupIcon />
+          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+          <span className="relative flex items-center gap-2">
+            {busy ? <Spinner /> : <GroupIcon />}
             Create a room
           </span>
-          <ArrowIcon />
+          <span className="relative">
+            <ArrowIcon />
+          </span>
         </button>
 
         <div className="flex items-center gap-3 text-xs font-medium text-ink/30">
@@ -193,29 +214,37 @@ export default function Home() {
             onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
             placeholder="Room code"
             maxLength={5}
-            className="w-full rounded-2xl border-2 border-ink/10 bg-white pl-11 pr-11 py-3.5 outline-none focus:border-tomato tracking-widest font-semibold transition"
+            className="w-full rounded-2xl border-2 border-ink/10 bg-white pl-11 pr-11 py-3.5 outline-none focus:border-tomato focus:ring-4 focus:ring-tomato/10 tracking-widest font-semibold transition"
           />
           <button
             onClick={handleJoin}
             disabled={busy}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-tomato disabled:opacity-30"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-tomato disabled:opacity-30 active:scale-90 transition-transform"
           >
-            <ArrowIcon />
+            {busy ? <Spinner /> : <ArrowIcon />}
           </button>
         </div>
 
-        {error && <p className="text-xs text-tomatoDark font-medium text-center">{error}</p>}
+        {error && (
+          <p className="text-xs text-tomatoDark font-medium text-center animate-fadeInUp">{error}</p>
+        )}
       </div>
 
-      <div className="flex items-center gap-2 mt-6 text-xs text-ink/40 font-medium z-10">
+      <div
+        className="flex items-center gap-2 mt-6 text-xs text-ink/40 font-medium z-10 animate-fadeInUp"
+        style={{ animationDelay: "260ms" }}
+      >
         <GroupIcon />
         <span>2–4 players · same rules, faster games</span>
       </div>
 
-      <div className="mt-auto pt-10 w-full max-w-sm flex items-end justify-between px-4 z-0">
-        <Pawn color="#FF6347" />
-        <Die />
-        <Pawn color="#3B82F6" />
+      <div
+        className="mt-auto pt-10 w-full max-w-sm flex items-end justify-between px-4 z-0 animate-fadeInUp"
+        style={{ animationDelay: "380ms" }}
+      >
+        <Pawn color="#FF6347" delay="0s" />
+        <Die delay="0.4s" />
+        <Pawn color="#3B82F6" delay="0.8s" />
       </div>
     </div>
   );
