@@ -4,7 +4,7 @@ let uid = null;
 const roomListeners = {};
 const pending = {};
 
-const SERVER_URL = "ws://localhost:8080";
+const SERVER_URL = "wss://komeludo.onrender.com";
 
 function getSocket() {
   if (!ws || ws.readyState > 1) {
