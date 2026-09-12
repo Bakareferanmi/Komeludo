@@ -153,12 +153,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center px-6 py-10 bg-white text-ink font-body overflow-hidden relative">
-      <div className="absolute -top-16 -left-16 w-48 h-48 rounded-full bg-tomatoLight pointer-events-none animate-blobMove" />
-      <div
-        className="absolute -bottom-20 -right-16 w-56 h-56 rounded-full bg-tomatoLight pointer-events-none animate-blobMove"
-        style={{ animationDelay: "3s" }}
-      />
-
       <div className="flex flex-col items-center mt-6 mb-8 z-10 animate-fadeInUp">
         <span className="font-display text-6xl font-black text-tomato leading-none mb-1">K</span>
         <h1 className="font-display text-4xl font-extrabold tracking-tight">Komeludo</h1>
