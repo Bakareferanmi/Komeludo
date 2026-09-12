@@ -91,8 +91,8 @@ export default function Board({ tokens, onTokenClick, movableSet }) {
               content = <span className="text-white text-[10px]">★</span>;
             } else if (r < 7) extraClass = "bg-goldPlayer/90";
             else if (r > 7) extraClass = "bg-ivoryPlayer/90";
-            else if (c < 7) extraClass = "bg-rosePlayer/90";
-            else extraClass = "bg-blushPlayer/90";
+            else if (c < 7) extraClass = "bg-blushPlayer/90";
+            else extraClass = "bg-rosePlayer/90";
           } else if (onTrack) {
             extraClass = isSafe ? "bg-tomatoLight" : "bg-white";
             if (isSafe) content = <span className="text-tomato text-[9px]">✦</span>;
